@@ -6,8 +6,7 @@ import matplotlib.pyplot as plt
 import networkx as graph
 import holoviews as hv
 import matplotlib.image as mpimg
-
-from matplotlib.cbook import get_sample_data
+from matplotlib.widgets import Slider, Button, RadioButtons
 
 chandler = plt.imread('chandler.png')
 joey = plt.imread('joey.png')
@@ -138,7 +137,7 @@ def relationship_graph_for_season(season_number):
         all_weights.append(data['weight']) 
  
     unique_weights = list(set(all_weights))
-
+    print(unique_weights)
 
     for weight in unique_weights:
         weighted_edges = [(node1,node2) for (node1,node2,edge_attr) in G.edges(data=True) if edge_attr['weight']==weight]
@@ -170,13 +169,78 @@ def relationship_graph_for_season(season_number):
         a.axis('off')
  
     #Plot the graph
-
-    plt.show() 
+  #  plt.show() 
     #plt.savefig("FRIENDS_SEASON" + str(season_number) + ".png")
+def make_slider_graphs(all_weights):
+    G = graph.Graph() 
+    node_list = ['Chandler','Joey','Monica','Phoebe','Rachel','Ross']
+    count = 0 
+    for node in node_list:
+        G.add_node(node,image=photos[count],size=.2)
+        count = count+1
 
+    pos=graph.circular_layout(G) 
+    graph.draw_networkx_nodes(G,pos,node_color='blue',node_size=7500)
+ 
+    labels = {}
+    for node_name in node_list:
+        labels[str(node_name)] =str(node_name)
+    graph.draw_networkx_labels(G,pos,labels,font_size=16)
+   
+    ''''
+    for i in range(0, len(r_data['rel_season'+ str(season_number)])):
+        vertices = [int(d) for d in str(r_data['rel_season'+ str(season_number)].keys()[i])]
+        w = r_data['rel_season'+ str(season_number)].values()[i]
+        G.add_edge(node_list[vertices[0] - 1],node_list[vertices[1] - 1],weight=w) 
+
+        all_weights = []
+ 
+    for (node1,node2,data) in G.edges(data=True):
+        all_weights.append(data['weight']) 
+ '''
+    unique_weights = list(set(all_weights))
+    print(unique_weights)
+
+    for weight in unique_weights:
+        weighted_edges = [(node1,node2) for (node1,node2,edge_attr) in G.edges(data=True) if edge_attr['weight']==weight]
+        width = weight*len(node_list)*3.0/sum(all_weights)
+        graph.draw_networkx_edges(G,pos,edgelist=weighted_edges,width=width)
+    
+    plt.axis('off')
+    plt.title('Relationships between characters in Season ' + str(season_number), y= 1.08)
+    
+    ax=plt.gca()
+    fig=plt.gcf()
+    label_pos = 0.5 # middle of edge, halfway between nodes
+    trans = ax.transData.transform
+    trans2 = fig.transFigure.inverted().transform
+    imsizes = graph.get_node_attributes(G, "size")
+    images = graph.get_node_attributes(G, "image")
+    i = 0
+    for (node) in node_list:
+        (x,y) = pos[node]
+        xx,yy = trans((x,y)) # figure coordinates
+        xa,ya = trans2((xx,yy)) # axes coordinates
+  
+        image = images[node]
+        imsize = imsizes[node]
+        a = plt.axes([xa-imsize/2.0,ya-imsize/2.0, imsize, imsize ])
+        a.imshow(photos[i])
+        i = i+1
+        a.set_aspect('equal')
+        a.axis('off')
+
+    sfreq = Slider(all_weights, 'Freq', 0.1, 10.0, valinit=0, valstep=10)
+    plt.show()
+print(r_data)
+'''''
+all_weights = []
 for i in range(1,11):
-    relationship_graph_for_season(i)
+    all_weights.append(get_relationship_weights_per_season(i))
 
+print(all_weights)
+#make_slider_graphs(all_weights)
+'''
 
 
 
