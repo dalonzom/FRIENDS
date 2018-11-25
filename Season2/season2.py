@@ -5,20 +5,21 @@ import pandas as pd
 from openpyxl import load_workbook 
 import numpy as np
 
-season2 = map(str, range(201, 212, 1))
-season2 = season2 + ["212-0213"] + map(str, range(214,225))
+#season2 = map(str, range(201, 212, 1))
+#season2 = season2 + ["212-0213"] + map(str, range(214,225))
+season2 = ["212toasb", "214towpv", "215rryk", "216jmo", "217emi", "218drd", "219ewg", "220oyd", "221towtb", "222towtp", "223towcp", "224bamw"]
 
 
 
 
+writer = pd.ExcelWriter("test2.xlsx")
 
-writer = pd.ExcelWriter("test.xlsx")
-tempArray = []
+text = []
 for episode in season2: 
-    quote_page = 'https://fangj.github.io/friends/season/0' + str(episode)+ '.html'
+    quote_page = 'http://www.livesinabox.com/friends/season2/' + episode + ".htm"
     print(quote_page)
     page = urllib2.urlopen(quote_page)
-    text = []
+    tempArray = []
     soup = BeautifulSoup(page, 'html.parser')
     i = 1
 
@@ -27,12 +28,12 @@ for episode in season2:
         name = name_box.text.strip()
         text.append(name)
         i = i+1
-
+    #print(text)
 
 
 
     episodes = pd.DataFrame({"text": text})
-    print(len(episodes))
+    print(episodes)
 
     for i in range(0, len(episodes)):
         temp = episodes.iloc[i,:].str.split("\n", n=-1, expand=True)
@@ -42,7 +43,7 @@ for episode in season2:
 episodes = pd.concat(tempArray)
 
 
-test = "testing"
+test = "testing2"
 
 episodes.to_excel(writer, test)
 writer.save()
