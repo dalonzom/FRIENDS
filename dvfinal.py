@@ -119,12 +119,8 @@ def relationship_graph_for_season(season_number):
 
  
     pos=graph.circular_layout(G) 
-    graph.draw_networkx_nodes(G,pos,node_color='blue',node_size=7500)
+    graph.draw_networkx_nodes(G,pos,node_color='blue',node_size=2500)
  
-    labels = {}
-    for node_name in node_list:
-        labels[str(node_name)] =str(node_name)
-    graph.draw_networkx_labels(G,pos,labels,font_size=16)
    
     for i in range(0, len(r_data['rel_season'+ str(season_number)])):
         vertices = [int(d) for d in str(r_data['rel_season'+ str(season_number)].keys()[i])]
